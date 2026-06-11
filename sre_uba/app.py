@@ -135,7 +135,59 @@ params = {
 #  SIDEBAR
 # ═══════════════════════════════════════════════════════════════════
 
-st.markdown(
+with st.sidebar:
+    st.markdown(
         """<div style="background:#1e3a5f;color:white;padding:.85rem 1rem;border-radius:10px;margin-bottom:1rem"><div style="font-size:1.1rem;font-weight:700">🗺️ SRE Ubá</div><div style="font-size:.75rem;opacity:.75">Roteirização logística — Instituto Hortense</div></div>""",
         unsafe_allow_html=True,
     )
+
+    # ── Identificação ────────────────────────────────────────────
+    st.markdown("#### Identificação")
+    nome_consultor = st.text_input("Consultor responsible", placeholder="Nome completo")
+    data_visita    = st.date_input("Data da visita", value=date.today())
+
+    st.divider()
+
+    # ── Configurar o dia ─────────────────────────────────────────
+    st.markdown("#### Configurar o dia")
+    saida   = st.selectbox("📍 Saída (onde você está agora)", NOMES, index=0)
+    retorno = st.selectbox("🏁 Encerramento / retorno", NOMES, index=0)
+
+    st.divider()
+
+    # ── Adicionar município ──────────────────────────────────────
+    st.markdown("#### Adicionar ao roteiro")
+    add_mun = st.selectbox("Município", NOMES, key="sb_add_mun")
+
+    # Multiselect de escolas do município selecionado
+    todas_esc_add = MUN_INDEX[add_mun]["escolas"]
+    esc_selecionadas = st.multiselect(
+        "Escolas a visitar",
+        todas_esc_add,
+        default=todas_esc_add,
+        key="ms_escolas_add",
+        help="Desmarque escolas que não serão visitadas nesta passagem.",
+    )
+
+    obj_add = st.selectbox("Objetivo da visita", OBJETIVOS_VISITA, key="sb_obj_add")
+    obj_livre = ""
+    if obj_add == "Outro (especificar abaixo)":
+        obj_livre = st.text_input("Descreva o objetivo", key="ti_obj_livre")
+
+    col_add, col_clear = st.columns(2)
+    with col_add:
+        if st.button("➕ Adicionar", use_container_width=True):
+            if not esc_selecionadas:
+                st.warning("Selecione ao menos uma escola.")
+            else:
+                st.session_state.paradas.append({
+                    "municipio": add_mun,
+                    "escolas":   esc_selecionadas,
+                    "objetivo":  obj_livre if obj_add == "Outro (especificar abaixo)" else obj_add,
+                })
+                st.rerun()
+
+    with col_clear:
+        if st.button("🗑 Limpar", use_container_width=True):
+            st.session_state.paradas = []
+            st.rerun()
