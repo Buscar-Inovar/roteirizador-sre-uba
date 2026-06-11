@@ -135,8 +135,7 @@ params = {
 #  SIDEBAR
 # ═══════════════════════════════════════════════════════════════════
 
-with st.sidebar:
-    st.markdown(
-        '<div style="background:#1e3a5f;color:white;padding:.85rem 1rem;'
-        'border-radius:10px;margin-bottom:1rem">'
-        '<div style="font-size:1.1rem;font-weight:700">🗺️ SRE
+st.markdown(
+        """<div style="background:#1e3a5f;color:white;padding:.85rem 1rem;border-radius:10px;margin-bottom:1rem"><div style="font-size:1.1rem;font-weight:700">🗺️ SRE Ubá</div><div style="font-size:.75rem;opacity:.75">Roteirização logística — Instituto Hortense</div></div>""",
+        unsafe_allow_html=True,
+    )
